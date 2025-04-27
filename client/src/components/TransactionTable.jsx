@@ -383,14 +383,14 @@ const TransactionTable = ({ transactions }) => {
                     />
                   </TableCell>
 
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm text-gray-800">
                     {formatDate(transaction?.date)},{" "}
                     {formatTime(transaction?.date)}
                   </TableCell>
 
-                  <TableCell className="truncate">
+                  <TableCell className="truncate text-gray-800">
                     {transaction?.description.length < 100 ? (
-                      <span className="">{transaction?.description}</span>
+                      <span className=" ">{transaction?.description}</span>
                     ) : (
                       <HoverCard>
                         <HoverCardTrigger className="cursor-pointer ">

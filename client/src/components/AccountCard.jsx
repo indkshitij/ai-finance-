@@ -29,7 +29,7 @@ const AccountCard = ({ account }) => {
 
   return (
     <Card className="group w-full h-44 sm:h-48 md:h-52  transition-all shadow-md duration-300 transform hover:scale-[1.02] hover:shadow-xl">
-      <CardHeader className="h-12 flex justify-between items-center">
+      <CardHeader className="h-16 flex justify-between items-center">
         <CardTitle className="text-md font-medium truncate text-gray-800">
           {name}
         </CardTitle>

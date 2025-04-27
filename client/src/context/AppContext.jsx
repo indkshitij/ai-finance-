@@ -66,7 +66,7 @@ const AppContextProvider = ({ children }) => {
       const { data } = await axios.get(`${backendUrl}/account/${accountId}`, {
         withCredentials: true,
       });
-      console.log("data", data);
+      
       if (data.success) {
         return { success: true, data: data.data };
       } else {
@@ -504,7 +504,7 @@ const AppContextProvider = ({ children }) => {
       );
 
       if (data?.success) {
-        toast.success(data?.message || "User synced successfully");
+      
       } else {
         toast.error(data?.message || "Failed to sync user");
       }

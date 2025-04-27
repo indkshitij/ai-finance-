@@ -13,7 +13,6 @@ import { AppContext } from "./context/AppContext";
 
 // Pages
 const Home = lazy(() => import("./pages/Home"));
-const Transaction = lazy(() => import("./pages/Transaction"));
 const Account = lazy(() => import("./pages/Account"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const SignInPage = lazy(() => import("./pages/SignInPage"));
@@ -30,7 +29,6 @@ function App() {
     if (!isLoaded) return;
 
     if (isSignedIn && user) {
-      console.log("Syncing user:", user);
       syncUser(user);
     } else if (!isSignedIn) {
       console.log("No user found or signed out. Logging out.");
@@ -62,10 +60,7 @@ function App() {
                 path="/account/:accountId"
                 element={!isSignedIn ? <Navigate to="/" /> : <Account />}
               />
-              <Route
-                path="/transaction"
-                element={!isSignedIn ? <Navigate to="/" /> : <Transaction />}
-              />
+
               <Route
                 path="/transaction/create"
                 element={

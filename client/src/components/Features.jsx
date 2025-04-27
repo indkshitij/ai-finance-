@@ -1,65 +1,59 @@
 import React from "react";
-import {
-  Zap,
-  BarChart3,
-  Receipt,
-  PieChart,
-  CreditCard,
-  Globe,
-} from "lucide-react";
 import { Card, CardContent } from "./ui/card";
+import { BarChart, Receipt, CreditCard, Globe, PieChart, Zap } from 'lucide-react';
 
 const featuresData = [
   {
-    icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
-    title: "Advanced Analytics",
+    icon: <BarChart className="h-8 w-8 text-blue-600" />,
+    title: "Smart Analytics",
     description:
-      "Get detailed insights into your spending patterns with AI-powered analytics.",
+      "Unlock the power of AI to reveal trends in your spending, helping you make informed financial decisions.",
   },
   {
     icon: <Receipt className="h-8 w-8 text-blue-600" />,
-    title: "Smart Receipt Scanner",
+    title: "Instant Receipt Capture",
     description:
-      "Extract data automatically from receipts using advanced AI technology.",
+      "Snap and upload receipts, and let AI extract transaction details, saving you hours of manual input.",
   },
   {
     icon: <PieChart className="h-8 w-8 text-blue-600" />,
-    title: "Budget Planning",
+    title: "Effortless Budgeting",
     description:
-      "Create and manage budgets effortlessly with intelligent recommendations.",
+      "Set up personalized budgets with ease, and get smart suggestions to stay on track and save more.",
   },
   {
     icon: <CreditCard className="h-8 w-8 text-blue-600" />,
-    title: "Multi-Account Support",
+    title: "All Accounts Unified",
     description:
-      "Link and manage multiple accounts and cards all in one secure place.",
+      "Link all your bank accounts, credit cards, and wallets for seamless tracking in one secure platform.",
   },
   {
     icon: <Globe className="h-8 w-8 text-blue-600" />,
-    title: "Multi-Currency",
+    title: "Global Currency Tracking",
     description:
-      "Track spending in different currencies with real-time conversion rates.",
+      "Manage and track expenses across multiple currencies with real-time conversion, no matter where you are.",
   },
   {
     icon: <Zap className="h-8 w-8 text-blue-600" />,
-    title: "Automated Insights",
+    title: "Instant Financial Insights",
     description:
-      "Receive smart, real-time insights to help you improve your finances.",
+      "Get AI-powered, actionable insights in real time, guiding you to smarter spending and savings.",
   },
 ];
 
+
 const Features = () => {
   return (
-    <section id="features" className="py-10 sm:py-20 ">
+    <section id="feature" className="py-10 sm:py-20 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl sm:text-4xl font-semibold text-center text-zinc-800 mb-8">
           Everything You Need to Manage Your Finances
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 ">
           {featuresData.map((feature, index) => (
             <Card
               key={index}
-              className="bg-white hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-100 cursor-default"
+              className="bg-white hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200 cursor-default"
             >
               <CardContent className="px-4 py-3 space-y-3 sm:space-y-4">
                 <div className="bg-blue-100 w-fit h-fit p-2.5 flex items-center justify-center rounded-full">

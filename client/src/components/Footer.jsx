@@ -37,13 +37,13 @@ const Footer = () => {
                       <Instagram className="w-4 h-4 group-hover:text-white" />
                     ),
                     label: "Instagram",
-                    href: "#",
+                    href: "https://www.instagram.com/kkkshitij/",
                     hover: "group-hover:bg-pink-500",
                   },
                   {
                     icon: <User className="w-4 h-4 group-hover:text-white" />,
                     label: "Portfolio",
-                    href: "#",
+                    href: "https://kshitijsingh.onrender.com",
 
                     hover: "group-hover:bg-orange-500 ",
                   },
@@ -52,7 +52,7 @@ const Footer = () => {
                       <GithubIcon className="w-4 h-4 group-hover:text-white" />
                     ),
                     label: "GitHub",
-                    href: "#",
+                    href: "https://github.com/indkshitij",
                     hover: "group-hover:bg-zinc-800 ",
                   },
                   {
@@ -61,17 +61,17 @@ const Footer = () => {
                     ),
 
                     label: "LinkedIn",
-                    href: "#",
+                    href: "https://www.linkedin.com/in/kshitijsingh07/",
                     hover: "group-hover:bg-blue-600",
                   },
                 ].map((item, index) => (
                   <a
                     key={index}
-                    href={item.href}
+                    href={item.href} target="_target"
                     className="group flex items-center gap-2 px-2 py-2 rounded-md hover:bg-blue-50 transition-colors text-gray-800"
                   >
                     <div
-                      className={`bg-gray-200 p-2 rounded-full ${item.hover}`}
+                      className={`bg-blue-500/10 p-2 rounded-full ${item.hover}`}
                     >
                       {item.icon}
                     </div>

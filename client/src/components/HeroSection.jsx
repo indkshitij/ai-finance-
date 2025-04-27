@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import Banner from "../assets/banner.jpeg";
+import Banner from "../assets/image.jpg";
+import { ArrowRight } from "lucide-react";
 
 const HeroSection = () => {
   const imageRef = useRef(null);
@@ -29,13 +30,14 @@ const HeroSection = () => {
   return (
     <div className="pt-24 pb-20">
       <div className="mx-auto text-center">
-        <h1 className="text-6xl md:text-7xl lg:text-8xl pb-6 gradient-title tracking-tighter font-extrabold font-inter">
-          Manage Your Finances <br />
-          with Intelligence
+        <h1 className="text-6xl md:text-7xl lg:text-8xl pb-6 gradient-title tracking-tight font-extrabold font-inter">
+          Unlock Your Financial <br />
+          Future with AI
         </h1>
         <p className="text-md text-gray-600 mb-8 max-w-2xl mx-auto">
-          An AI-powered financial management platform that helps you track,
-          analyze, and optimize your spending with real-time insights.
+          Manage your finances effortlessly with AI. Track spending, income, and
+          budget in real time, with instant transaction entry through bill
+          scanning and personalized insights.
         </p>
       </div>
 
@@ -43,30 +45,28 @@ const HeroSection = () => {
         <Link to="/dashboard">
           <Button
             size="lg"
-            className="px-8 cursor-pointer hover:scale-105 duration-300 ease-in-out"
+            className="px-8 cursor-pointer hover:scale-[1.02] bg-blue-500 hover:bg-blue-600 duration-300 ease-in-out"
           >
-            Get Started
+            Get Started <ArrowRight />
           </Button>
         </Link>
-        <Link to="#">
+        <a href="#testimonials">
           <Button
             size="lg"
             variant="outline"
-            className="px-8 cursor-pointer hover:scale-105 duration-300 ease-in-out"
+            className="px-8 cursor-pointer hover:scale-[1.02] text-gray-800 duration-300 ease-in-out"
           >
-            Watch Demo
+            See Testimonial
           </Button>
-        </Link>
+        </a>
       </div>
 
       <div className="hero-image-wrapper mt-5 md:mt-0">
         <div ref={imageRef} className="hero-image">
           <img
             src={Banner}
-            width={1080}
-            height={720}
             alt="Dashboard Preview"
-            className="rounded-lg shadow-2xl border mx-auto"
+            className="rounded-lg shadow-2xl border mx-auto w-auto md:h-[70vh] lg:h-[80vh] xl:h-[90vh]"
           />
         </div>
       </div>

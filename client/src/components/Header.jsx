@@ -63,20 +63,17 @@ const Header = () => {
 
         <SignedOut>
           <nav className="flex gap-2 items-center">
-            <Link to="/sign-in">
-              <Button
-                variant="outline"
-                className="cursor-pointer text-sm  hover:scale-105 duration-300 ease-in-out"
-              >
-                Sign In
-              </Button>
-            </Link>
             <Link to="/sign-up">
               <Button
                 variant="outline"
                 className="cursor-pointer text-sm  hover:scale-105 duration-300 ease-in-out"
               >
                 Sign Up
+              </Button>
+            </Link>
+            <Link to="/sign-in">
+              <Button className="cursor-pointer text-sm bg-blue-500 hover:bg-blue-600 hover:scale-105 duration-300 ease-in-out">
+                Sign In
               </Button>
             </Link>
           </nav>

@@ -18,7 +18,6 @@ import { Button } from "./ui/button";
 import { Check, Pencil, X } from "lucide-react";
 import { AppContext } from "@/context/AppContext";
 import { Progress } from "./ui/progress";
-import { Switch } from "./ui/switch";
 
 const BudgetProgress = () => {
   const {
@@ -30,9 +29,8 @@ const BudgetProgress = () => {
     handleUpdateBudget,
   } = useContext(AppContext);
 
-  let prevBudget = parseFloat(budget);
   const [isEditing, setIsEditing] = useState(false);
-  const [newBudget, setNewBudget] = useState(prevBudget || 0);
+  const prevBudget = budget?.toString() || 0;
   const [loading, setLoading] = useState(false);
 
   let defaultAcc;
@@ -41,10 +39,10 @@ const BudgetProgress = () => {
   }
 
   const handleCancel = () => {
-    setNewBudget(budget?.amount?.toString() || "");
     setIsEditing(false);
   };
 
+  const [newBudget, setNewBudget] = useState(prevBudget || 0);
   const handleSave = async () => {
     if (!newBudget || isNaN(newBudget) || parseFloat(newBudget) <= 0) {
       toast.error("Please enter a valid budget amount.");
@@ -54,7 +52,6 @@ const BudgetProgress = () => {
     const updatedBudget = {
       accountId: defaultAcc._id,
       amount: parseFloat(newBudget),
-      recurrence,
     };
     const updateResult = await handleUpdateBudget(updatedBudget);
     if (updateResult?.success) {
@@ -69,15 +66,19 @@ const BudgetProgress = () => {
   }
 
   useEffect(() => {
+
     fetchBudget();
   }, []);
+  
 
   return (
     <section className="">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div className="flex-1">
-            <CardTitle className="text-gray-800">Monthly Budget (Default Account)</CardTitle>
+            <CardTitle className="text-gray-900">
+              Monthly Budget (Default Account)
+            </CardTitle>
             <div className="flex items-center gap-2 mt-3">
               {isEditing ? (
                 <div className="flex items-center gap-2">

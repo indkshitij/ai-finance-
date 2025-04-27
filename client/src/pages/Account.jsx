@@ -45,7 +45,7 @@ const Account = () => {
           </div>
 
           <div className="w-full xl:w-fit flex flex-row xl:flex-col justify-between items-end text-right">
-            <p className="text-xl sm:text-2xl font-medium inline-block">
+            <p className="text-xl sm:text-2xl font-medium inline-block text-gray-800">
               {currency} {parseFloat(accountData.balance).toFixed(2)}
             </p>
             <p className="text-sm text-muted-foreground">

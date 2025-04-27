@@ -135,7 +135,7 @@ const AccountOverview = ({ accountData }) => {
       <Card className="w-full ">
         <CardHeader>
           <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <CardTitle className="text-base sm:text-md md:text-lg font-medium text-gray-800">
+            <CardTitle className="text-base sm:text-md md:text-lg font-medium text-gray-900">
               Recent Transactions
             </CardTitle>
             <Select value={selectedAccId} onValueChange={setSelectedAccId}>
@@ -166,7 +166,7 @@ const AccountOverview = ({ accountData }) => {
                   className="flex flex-col px-4 py-2.5 border-b transition-all bg-white"
                 >
                   {/* Description */}
-                  <div className="text-sm font-normal break-words">
+                  <div className="text-sm font-normal break-words text-gray-800">
                     {t?.description.length === 0
                       ? "Description is not Mentioned"
                       : t.description.length > 80
@@ -206,7 +206,7 @@ const AccountOverview = ({ accountData }) => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base sm:text-md md:text-lg font-medium text-gray-800">
+          <CardTitle className="text-base sm:text-md md:text-lg font-medium text-gray-900">
             Monthly Expense Breakdown
           </CardTitle>
         </CardHeader>

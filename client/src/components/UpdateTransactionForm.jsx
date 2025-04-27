@@ -194,7 +194,7 @@ const UpdateTransactionForm = ({ accountData }) => {
         </div>
         {/* Transaction Type */}
         <div className="space-y-0">
-          <label className="text-xs font-medium">Transaction Type</label>
+          <label className="text-xs font-medium text-gray-800">Transaction Type</label>
           <Select
             disabled={updateTransactionLoading}
             onValueChange={(value) => setValue("transactionType", value)}
@@ -218,7 +218,7 @@ const UpdateTransactionForm = ({ accountData }) => {
         {/* Amount & Account */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="space-y-0">
-            <label className="text-xs font-medium">Amount</label>
+            <label className="text-xs font-medium text-gray-800">Amount</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-base">
                 {currency}
@@ -238,7 +238,7 @@ const UpdateTransactionForm = ({ accountData }) => {
           </div>
 
           <div className="space-y-0">
-            <label className="text-xs font-medium">Account</label>
+            <label className="text-xs font-medium text-gray-800">Account</label>
             <Select
               onValueChange={(value) => setValue("accountId", value)}
               defaultValue={getValues("accountId")}
@@ -276,7 +276,7 @@ const UpdateTransactionForm = ({ accountData }) => {
 
         {/* Date */}
         <div className="space-y-0 ">
-          <label className="text-xs font-medium">Date</label>
+          <label className="text-xs font-medium text-gray-800">Date</label>
           <Popover
             open={isOpen}
             onOpenChange={setIsOpen}
@@ -393,7 +393,7 @@ const UpdateTransactionForm = ({ accountData }) => {
 
         {/* Category */}
         <div className="space-y-0">
-          <label className="text-xs font-medium">Category</label>
+          <label className="text-xs font-medium text-gray-800">Category</label>
           <Popover
             open={open}
             onOpenChange={setOpen}
@@ -454,7 +454,7 @@ const UpdateTransactionForm = ({ accountData }) => {
 
         {/* Description */}
         <div className="space-y-0">
-          <label className="text-xs font-medium">Description</label>
+          <label className="text-xs font-medium text-gray-800">Description</label>
           <Input
             {...register("description")}
             placeholder="Description"
@@ -471,7 +471,7 @@ const UpdateTransactionForm = ({ accountData }) => {
             <div className="space-y-0.5">
               <label
                 htmlFor="isDefault"
-                className="text-base font-medium cursor-pointer"
+                className="text-base font-medium cursor-pointer text-gray-800"
               >
                 Reccuring transaction
               </label>
@@ -490,7 +490,7 @@ const UpdateTransactionForm = ({ accountData }) => {
 
         {isRecurring && (
           <div className="space-y-0">
-            <label className="text-xs font-medium">Recurrence Interval</label>
+            <label className="text-xs font-medium text-gray-800">Recurrence Interval</label>
             <Select
               onValueChange={(value) => setValue("recurringInterval", value)}
               defaultValue={getValues("recurringInterval")}
