@@ -1,11 +1,34 @@
 import React from "react";
 import { SignIn } from "@clerk/clerk-react";
+import Lottie from "lottie-react";
+import SignInLottie from "../assets/SignIn.json";
 
 const SignInPage = () => {
-  document.title = "Sign In | NeoFinance"
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-zinc-900 p-4">
-      <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-radial from-blue-600 via-white to-blue-600 bg-[length:200%_200%] overflow-hidden px-4 py-5 sm:py-0">
+      {/* Floating Blur Shapes */}
+      <div className="absolute w-[600px] h-[500px] bg-blue-600 opacity-30 rounded-full blur-3xl -top-40 left-[-250px] animate-pulse-slow z-0" />
+      <div className="absolute w-[400px] h-[400px] bg-blue-600 opacity-30 rounded-full blur-3xl -bottom-40 right-[-250px] animate-pulse-slow z-0" />
+
+      <div className="h-screen flex justify-center items-center w-full flex-col sm:flex-row">
+        <div className="relative hidden lg:flex justify-center items-center sm:w-1/2 w-full py-8 sm:py-0">
+          <Lottie
+            animationData={SignInLottie}
+            loop
+            autoplay
+            className="absolute -right-12 w-full h-auto max-w-[700px] rotate-y-180"
+          />
+        </div>
+
+        <div className="h-full flex justify-center items-center sm:w-1/2 w-full py-8 sm:py-0">
+          <SignIn
+            path="/sign-in"
+            routing="path"
+            signUpUrl="/sign-up"
+            afterSignInUrl="/dashboard"
+          />
+        </div>
+      </div>
     </div>
   );
 };

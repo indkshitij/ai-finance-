@@ -30,7 +30,7 @@ const DATE_RANGES = {
 
 const AccountChart = ({ transactions }) => {
   const { currency } = useContext(AppContext);
-  const [dateRange, setDateRanges] = useState("1M");
+  const [dateRange, setDateRanges] = useState("7D");
 
   const filteredData = useMemo(() => {
     const range = DATE_RANGES[dateRange];
@@ -89,57 +89,65 @@ const AccountChart = ({ transactions }) => {
 
   return (
     <section className="w-full">
-      <Card className="pb-5">
+      <Card className="px-0 pb-12 rounded-lg">
         <CardHeader>
           {/* Heading */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <CardTitle className="font-normal">Transaction Overview</CardTitle>
+          <div className="flex flex-col md:flex-row justify-between  items-end sm:items-center gap-4 ">
+            {/* Stats */}
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 justify-start items-center mt-2 gap-4">
+              <div className="text-left ">
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Total Income
+                </p>
+                <p className="text-green-500 font-medium text-md sm:text-lg">
+                  {currency} {totals.income.toFixed(2)}
+                </p>
+              </div>
+              <div className="text-left">
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Total Expense
+                </p>
+                <p className="text-red-500 font-medium text-md sm:text-lg">
+                  {currency} {totals.expense.toFixed(2)}
+                </p>
+              </div>
+              <div className="text-left">
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Net Total
+                </p>
+                <p
+                  className={`font-medium text-md sm:text-lg ${
+                    netTotal >= 0 ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {currency} {netTotal.toFixed(2)}
+                </p>
+              </div>
+            </div>
             <Select defaultValue={dateRange} onValueChange={setDateRanges}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[130px] sm:w-[150px]">
                 <SelectValue placeholder="Select Range" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(DATE_RANGES).map(([key, { label }]) => (
-                  <SelectItem key={key} value={key}>
+                  <SelectItem
+                    key={key}
+                    value={key}
+                    className="text-xs sm:text-sm"
+                  >
                     {label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-
-          {/* Stats */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-2 gap-4">
-            <div className="text-center w-full md:w-1/3">
-              <p className="text-muted-foreground text-sm">Total Income</p>
-              <p className="text-green-500 font-semibold text-lg">
-                {currency} {totals.income.toFixed(2)}
-              </p>
-            </div>
-            <div className="text-center w-full md:w-1/3">
-              <p className="text-muted-foreground text-sm">Total Expense</p>
-              <p className="text-red-500 font-semibold text-lg">
-                {currency} {totals.expense.toFixed(2)}
-              </p>
-            </div>
-            <div className="text-center w-full md:w-1/3">
-              <p className="text-muted-foreground text-sm">Net Total</p>
-              <p
-                className={`font-semibold text-lg ${
-                  netTotal >= 0 ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {currency} {netTotal.toFixed(2)}
-              </p>
-            </div>
-          </div>
         </CardHeader>
 
-        <div className="h-44 sm:h-52 md:h-[300px] ">
+        <div className="h-60 sm:h-52 md:h-[300px] ">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={filteredData}
-              margin={{ top: 20, right: 20, left: 20, bottom: 15 }}
+              margin={{ top: 20, right: 15, left: 5, bottom: 15 }}
               barCategoryGap="25%"
             >
               <CartesianGrid
@@ -151,11 +159,11 @@ const AccountChart = ({ transactions }) => {
               {/* X Axis */}
               <XAxis
                 dataKey="name"
-                angle={-50}
+                angle={-40}
                 textAnchor="end"
                 interval={
-                  filteredData.length > 25
-                    ? Math.ceil(filteredData.length / 30)
+                  filteredData.length > 15
+                    ? Math.ceil(filteredData.length / 15)
                     : 0
                 }
                 style={{ fontSize: "12px" }}
@@ -163,7 +171,7 @@ const AccountChart = ({ transactions }) => {
 
               {/* Y Axis */}
               <YAxis
-                fontSize={12}
+                fontSize={11}
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => `${currency} ${value}`}
@@ -180,8 +188,6 @@ const AccountChart = ({ transactions }) => {
                 labelFormatter={(label) => `Date: ${label}`}
               />
 
-              <Legend verticalAlign="top" height={40} />
-
               {/* Bars */}
               <Bar
                 dataKey="income"
@@ -197,6 +203,20 @@ const AccountChart = ({ transactions }) => {
               />
             </BarChart>
           </ResponsiveContainer>
+          <div className="flex justify-center items-center gap-5 mt-3">
+            <div className="flex items-center justify-center gap-1.5">
+              <div className="w-3 h-3 bg-[#ef4444] rounded-full"></div>
+              <p className="text-[#ef4444] text-xs sm:text-sm font-normal sm:font-medium">
+                Expense
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-1.5">
+              <div className="w-3 h-3 bg-[#22c55e] rounded-full"></div>
+              <p className="text-[#22c55e] text-xs sm:text-sm font-normal sm:font-medium">
+                Income
+              </p>
+            </div>
+          </div>
         </div>
       </Card>
     </section>

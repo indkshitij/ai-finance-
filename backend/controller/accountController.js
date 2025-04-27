@@ -61,6 +61,7 @@ export const createAccount = async (req, res) => {
       userId: _id,
       accountId: newAccount?._id,
       transactionType: "INCOME",
+      priorBalance: 0,
       amount: balanceFloat,
       description: "Initial deposit for the newly created account.",
       accountId: newAccount._id,
@@ -224,7 +225,8 @@ export const deleteAccount = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Account and all related transactions and budgets deleted successfully",
+      message:
+        "Account and all related transactions and budgets deleted successfully",
     });
   } catch (error) {
     return res.status(500).json({
@@ -235,33 +237,3 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
-// export const getAccountWithTransactions = async (req, res) => {
-//   try {
-//     const { _id } = req.user;
-//     const { accountId } = req.params;
-
-//     if (!accountId) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "accountId is required",
-//       });
-//     }
-
-//     const transactions = await transactionModel.find({
-//       accountId,
-//       userId: _id,
-//     }).sort({ date: -1 });
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Transactions retrieved successfully",
-//       data: transactions,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({
-//       success: false,
-//       message: "Server issue: Unable to fetch transactions",
-//       error: error.message,
-//     });
-//   }
-// };

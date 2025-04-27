@@ -3,7 +3,7 @@ import { AppContext } from "@/context/AppContext";
 import { transactionSchema } from "@/lib/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Check, ChevronsUpDown, CalendarIcon } from "lucide-react";
 import {
   Select,
@@ -36,13 +36,31 @@ import CreateAccountDrawer from "./CreateAccountDrawer";
 import { defaultCategories } from "../lib/categories.js";
 import ReceiptScanner from "./ReceiptScanner";
 
-const AddTransactionForm = ({ accountData }) => {
+const UpdateTransactionForm = ({ accountData }) => {
+  const { transactionId } = useParams();
   const navigate = useNavigate();
-  const { currency, formatDate, formatTime, createTransaction } =
-    useContext(AppContext);
+  const {
+    currency,
+    formatDate,
+    formatTime,
+    updateTransaction,
+    fetchAccountDetails,
+    fetchTransactionDataUsingId,
+  } = useContext(AppContext);
+  const [transactionDetails, setTransactionDetails] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      await fetchAccountDetails();
+
+      const transaction = await fetchTransactionDataUsingId(transactionId);
+      if (transaction?.success) {
+        setTransactionDetails(transaction.data);
+      }
+    })();
+  }, [transactionId]);
 
   // form and default values
-  const defaultAccount = accountData?.find((acc) => acc.isDefault)?._id || "";
   const {
     register,
     handleSubmit,
@@ -53,17 +71,33 @@ const AddTransactionForm = ({ accountData }) => {
     getValues,
   } = useForm({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      transactionType: "EXPENSE",
-      amount: "",
-      description: "",
-      date: new Date(),
-      accountId: defaultAccount,
-      category: "",
-      isRecurring: false,
-      recurringInterval: "MONTHLY",
-    },
   });
+
+  useEffect(() => {
+    (async () => {
+      await fetchAccountDetails();
+      const transaction = await fetchTransactionDataUsingId(transactionId);
+      if (transaction?.success) {
+        setTransactionDetails(transaction.data);
+
+        // Reset form values after data is loaded
+        reset({
+          transactionType: transaction?.data?.transactionType || "",
+          amount: transaction?.data.amount?.toString() || "",
+          description: transaction?.data.description?.toString() || "",
+          date: transaction?.data?.date?.toString() || "",
+          accountId: transaction?.data?.accountId?.toString() || "",
+          category: transaction?.data?.category?.toString() || "",
+          isRecurring: transaction?.data?.isRecurring || false,
+          recurringInterval: transaction?.data?.isRecurring
+            ? transaction?.data?.recurringInterval || ""
+            : "",
+        });
+      }
+    })();
+  }, [transactionId, reset]);
+
+  const watchedAmount = watch("amount");
   const datee = watch("date");
   const selectedAcc = watch("accountId");
   const isRecurring = watch("isRecurring");
@@ -73,26 +107,27 @@ const AddTransactionForm = ({ accountData }) => {
   );
   // Category popover
   const [open, setOpen] = useState(false);
-  const [addTransactionLoading, setAddTransactionLoading] = useState(false);
+  const [updateTransactionLoading, setUpdateTransactionLoading] =
+    useState(false);
 
   // handle form submit
   const onSubmit = async (formData) => {
-    setAddTransactionLoading(true);
+    setUpdateTransactionLoading(true);
     const formatData = {
       ...formData,
       amount: parseFloat(formData?.amount),
     };
 
-    let result = await createTransaction(formatData);
+    let result = await updateTransaction(formatData, transactionDetails._id);
     if (result.success) {
       reset();
       navigate(-1);
     }
-    setAddTransactionLoading(false);
+    setUpdateTransactionLoading(false);
   };
 
   // time Picker
-  const [date, setDate] = useState(datee.toISOString());
+  const [date, setDate] = useState(datee);
   const [isOpen, setIsOpen] = useState(false);
 
   const hours = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -146,6 +181,10 @@ const AddTransactionForm = ({ accountData }) => {
     }
   };
 
+  const selectedAccountName = accountData?.find(
+    (acc) => acc._id == selectedAcc
+  )?.name;
+  
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-2 sm:space-y-4">
@@ -155,13 +194,11 @@ const AddTransactionForm = ({ accountData }) => {
         </div>
         {/* Transaction Type */}
         <div className="space-y-0">
-          <label className="text-xs font-medium text-gray-600">
-            Transaction Type
-          </label>
+          <label className="text-xs font-medium">Transaction Type</label>
           <Select
-            disabled={addTransactionLoading}
+            disabled={updateTransactionLoading}
             onValueChange={(value) => setValue("transactionType", value)}
-            defaultValue={transactionType}
+            value={transactionType}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Transaction type" />
@@ -181,17 +218,17 @@ const AddTransactionForm = ({ accountData }) => {
         {/* Amount & Account */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="space-y-0">
-            <label className="text-xs font-medium text-gray-600">Amount</label>
+            <label className="text-xs font-medium">Amount</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-base">
                 {currency}
               </span>
               <Input
-                disabled={addTransactionLoading}
+                {...register("amount")}
+                disabled={updateTransactionLoading}
                 className="pl-8"
                 type="number"
                 step="0.01"
-                {...register("amount")}
                 placeholder="0.00"
               />
             </div>
@@ -201,14 +238,14 @@ const AddTransactionForm = ({ accountData }) => {
           </div>
 
           <div className="space-y-0">
-            <label className="text-xs font-medium text-gray-600">Account</label>
+            <label className="text-xs font-medium">Account</label>
             <Select
               onValueChange={(value) => setValue("accountId", value)}
               defaultValue={getValues("accountId")}
-              disabled={addTransactionLoading}
+              disabled={true}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select Account">
+                <SelectValue placeholder={selectedAccountName}>
                   {accountData?.find((acc) => acc._id === selectedAcc?.name)}
                 </SelectValue>
               </SelectTrigger>
@@ -239,11 +276,11 @@ const AddTransactionForm = ({ accountData }) => {
 
         {/* Date */}
         <div className="space-y-0 ">
-          <label className="text-xs font-medium text-gray-600">Date</label>
+          <label className="text-xs font-medium">Date</label>
           <Popover
             open={isOpen}
             onOpenChange={setIsOpen}
-            disabled={addTransactionLoading}
+            disabled={updateTransactionLoading}
           >
             <PopoverTrigger asChild>
               <Button
@@ -356,11 +393,11 @@ const AddTransactionForm = ({ accountData }) => {
 
         {/* Category */}
         <div className="space-y-0">
-          <label className="text-xs font-medium text-gray-600">Category</label>
+          <label className="text-xs font-medium">Category</label>
           <Popover
             open={open}
             onOpenChange={setOpen}
-            disabled={addTransactionLoading}
+            disabled={updateTransactionLoading}
           >
             <PopoverTrigger asChild>
               <Button
@@ -417,13 +454,11 @@ const AddTransactionForm = ({ accountData }) => {
 
         {/* Description */}
         <div className="space-y-0">
-          <label className="text-xs font-medium text-gray-600">
-            Description
-          </label>
+          <label className="text-xs font-medium">Description</label>
           <Input
             {...register("description")}
             placeholder="Description"
-            disabled={addTransactionLoading}
+            disabled={updateTransactionLoading}
           />
           {errors.description && (
             <p className="text-red-500 text-xs">{errors.description.message}</p>
@@ -436,7 +471,7 @@ const AddTransactionForm = ({ accountData }) => {
             <div className="space-y-0.5">
               <label
                 htmlFor="isDefault"
-                className="text-base font-medium cursor-pointer text-gray-600"
+                className="text-base font-medium cursor-pointer"
               >
                 Reccuring transaction
               </label>
@@ -448,20 +483,18 @@ const AddTransactionForm = ({ accountData }) => {
               id="isRecurring"
               checked={isRecurring}
               onCheckedChange={(checked) => setValue("isRecurring", checked)}
-              disabled={addTransactionLoading}
+              disabled={updateTransactionLoading}
             />
           </div>
         </div>
 
         {isRecurring && (
           <div className="space-y-0">
-            <label className="text-xs font-medium text-gray-600">
-              Recurrence Interval
-            </label>
+            <label className="text-xs font-medium">Recurrence Interval</label>
             <Select
               onValueChange={(value) => setValue("recurringInterval", value)}
               defaultValue={getValues("recurringInterval")}
-              disabled={addTransactionLoading}
+              disabled={updateTransactionLoading}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Recurrence Interval" />
@@ -487,17 +520,17 @@ const AddTransactionForm = ({ accountData }) => {
             onClick={() => {
               navigate(-1);
             }}
-            className="w-full sm:w-auto cursor-pointer hover:scale-[1.02] duration-300 text-gray-600"
-            disabled={addTransactionLoading}
+            className="w-full sm:w-auto cursor-pointer hover:scale-[1.02] duration-300"
+            disabled={updateTransactionLoading}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            disabled={addTransactionLoading}
+            disabled={updateTransactionLoading}
             className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 cursor-pointer hover:scale-[1.02] duration-300"
           >
-            {addTransactionLoading ? "Adding..." : "Add Transaction"}
+            {updateTransactionLoading ? "Updating..." : "Update Transaction"}
           </Button>
         </div>
       </div>
@@ -505,4 +538,4 @@ const AddTransactionForm = ({ accountData }) => {
   );
 };
 
-export default AddTransactionForm;
+export default UpdateTransactionForm;

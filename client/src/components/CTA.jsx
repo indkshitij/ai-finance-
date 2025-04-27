@@ -12,7 +12,7 @@ const CTA = () => {
           <h2 className="text-3xl font-semibold text-white mb-4">
             Meet the Future of Personal Finance
           </h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-sm md:text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
             NeoFinance combines smart AI with powerful tools to simplify how you
             budget, invest, and grow—securely and intuitively.
           </p>

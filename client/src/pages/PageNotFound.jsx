@@ -1,7 +1,5 @@
 import React from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
@@ -18,11 +16,9 @@ const PageNotFound = () => {
       <div className="absolute w-[600px] h-[500px] bg-blue-600 opacity-30 rounded-full blur-3xl -top-40 left-[-250px] animate-pulse-slow z-0" />
       <div className="absolute w-[400px] h-[400px] bg-blue-600 opacity-30 rounded-full blur-3xl -bottom-40 right-[-250px] animate-pulse-slow z-0" />
 
-      <motion.div
+      <div
         className="relative z-10 w-full flex flex-col items-center text-center"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+       
       >
         <div className="w-full max-w-sm mb-6">
           <Lottie
@@ -72,7 +68,7 @@ const PageNotFound = () => {
             </Link>
           </SignedOut>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -52,6 +52,36 @@ const AppContextProvider = ({ children }) => {
         serverMessage ||
         err?.message ||
         "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch particular  account Using id
+  const fetchAccountDataUsingId = async (accountId) => {
+    setLoading(true);
+
+    try {
+      const { data } = await axios.get(`${backendUrl}/account/${accountId}`, {
+        withCredentials: true,
+      });
+      console.log("data", data);
+      if (data.success) {
+        return { success: true, data: data.data };
+      } else {
+        toast.error(data.message || "Failed to fetch account details.");
+        return { success: false, data: null };
+      }
+    } catch (err) {
+      console.error(err);
+      const serverMessage = err?.response?.data?.message;
+      const finalMessage =
+        serverMessage ||
+        err?.message ||
+        "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+      return { success: false, data: null };
     } finally {
       setLoading(false);
     }
@@ -70,6 +100,7 @@ const AppContextProvider = ({ children }) => {
       );
       if (data.success) {
         setTransactions(data.data);
+        return { success: true, data: data };
       } else {
         toast.error(data.message || "Failed to fetch transactions.");
       }
@@ -80,6 +111,69 @@ const AppContextProvider = ({ children }) => {
         err?.message ||
         "An unexpected error occurred. Please try again later.";
       toast.error(serverMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // function to fetch particular transaction
+  const fetchTransactionDataUsingId = async (transactionId) => {
+    setLoading(true);
+
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/transaction/id/${transactionId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        return { success: true, data: data.data };
+      } else {
+        toast.error(data.message || "Failed to fetch transaction details.");
+        return { success: false, data: null };
+      }
+    } catch (err) {
+      console.error(err);
+      const serverMessage = err?.response?.data?.message;
+      const finalMessage =
+        serverMessage ||
+        err?.message ||
+        "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+      return { success: false, data: null };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDashboardTransactionsUsingAccountId = async (accountId) => {
+    setLoading(true);
+
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/transaction/dashboard/${accountId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        return { success: true, data: data.data };
+      } else {
+        toast.error(data.message || "Failed to fetch transaction details.");
+        return { success: false, data: null };
+      }
+    } catch (err) {
+      console.error(err);
+      const serverMessage = err?.response?.data?.message;
+      const finalMessage =
+        serverMessage ||
+        err?.message ||
+        "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+      return { success: false, data: null };
     } finally {
       setLoading(false);
     }
@@ -106,8 +200,6 @@ const AppContextProvider = ({ children }) => {
         err?.message ||
         "An unexpected error occurred. Please try again later.";
       toast.error(serverMessage);
-
-      toast.error(finalMessage);
     } finally {
       setLoading(false);
     }
@@ -121,26 +213,29 @@ const AppContextProvider = ({ children }) => {
         `${backendUrl}/account/delete/${accountId}`,
         { withCredentials: true }
       );
-  
+
       if (data.success) {
-        toast.success(data.message || "Account deleted successfully along with all related data.");
+        toast.success(
+          data.message ||
+            "Account deleted successfully along with all related data."
+        );
       } else {
         toast.error(data.message || "Failed to delete the account.");
       }
     } catch (err) {
       console.error("Delete Account Error:", err);
-  
+
       const errorMessage =
         err?.response?.data?.message ||
         err?.message ||
         "Something went wrong. Please try again later.";
-  
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
-  
+
   // Function to change the default account
   const changeDefaultAccount = async (accountId) => {
     setLoading(true);
@@ -153,6 +248,7 @@ const AppContextProvider = ({ children }) => {
 
       if (data.success) {
         fetchAccountDetails();
+        fetchBudget();
         toast.success(data.message || "Default account changed successfully!");
       } else {
         toast.error(data.message || "Failed to change default account.");
@@ -179,12 +275,13 @@ const AppContextProvider = ({ children }) => {
       const { data } = await axios.get(`${backendUrl}/budget/get`, {
         withCredentials: true,
       });
-
-      if (data.success) {
+      if (data?.success) {
         setBudget(data?.data?.budget?.amount);
         setExpenses(data?.data?.currentExpenses);
+        return { success: true, data: data };
       } else {
         toast.error(data?.message || "Failed to fetch budget.");
+        return { success: false };
       }
     } catch (err) {
       console.log(err);
@@ -194,6 +291,37 @@ const AppContextProvider = ({ children }) => {
         err?.message ||
         "An unexpected error occurred. Please try again later.";
       toast.error(finalMessage);
+      return { success: false };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to update budget
+  const handleUpdateBudget = async (updatedBudget) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/budget/setup`,
+        updatedBudget,
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        fetchBudget();
+        toast.success(data.message || "Budget updated successfully!");
+        return { success: true };
+      } else {
+        toast.error(data.message || "Failed to update budget.");
+        return { success: false };
+      }
+    } catch (error) {
+      console.error("Error updating budget:", error);
+      const serverMessage = error?.response?.data?.message;
+      const finalMessage =
+        serverMessage || error?.message || "An unexpected error occurred.";
+      toast.error(finalMessage);
+      return { success: false };
     } finally {
       setLoading(false);
     }
@@ -202,22 +330,56 @@ const AppContextProvider = ({ children }) => {
   // function to create transaction
   const createTransaction = async (formData) => {
     setLoading(true);
-    const formatData = {
-      ...formData,
-      amount: parseFloat(formData.amount),
-    };
 
     try {
       const { data } = await axios.post(
         `${backendUrl}/transaction/add`,
-        formatData,
+        formData,
         {
           withCredentials: true,
         }
       );
 
       if (data.success) {
+        fetchBudget();
+        fetchAccountDetails();
         toast.success(data.message || "Transaction added successfully.");
+        return { success: true };
+      } else {
+        toast.error(data.message || "Something went wrong.");
+        return { success: false };
+      }
+    } catch (error) {
+      console.error("Error during form submission:", error);
+      const serverMessage = error?.response?.data?.message;
+      const finalMessage =
+        serverMessage ||
+        error?.message ||
+        "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+      return { success: false };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // function to update transaction
+  const updateTransaction = async (formData, transactionId) => {
+    setLoading(true);
+
+    try {
+      const { data } = await axios.put(
+        `${backendUrl}/transaction/update/${transactionId}`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data.success) {
+        fetchBudget();
+        fetchAccountDetails();
+        toast.success(data.message || "Transaction updated successfully.");
         return { success: true };
       } else {
         toast.error(data.message || "Something went wrong.");
@@ -250,12 +412,73 @@ const AppContextProvider = ({ children }) => {
 
       if (data?.success) {
         toast.success(
-          data?.message || "🎉 Your account has been created successfully!"
+          data?.message || "Your account has been created successfully!"
         );
         fetchAccountDetails();
         return { success: true };
       } else {
         toast.error(data?.message || "Something went wrong. Please try again.");
+        return { success: false };
+      }
+    } catch (err) {
+      console.log(err);
+      const serverMessage = err?.response?.data?.message;
+      const finalMessage =
+        serverMessage ||
+        err?.message ||
+        "An unexpected error occurred. Please try again later.";
+      toast.error(finalMessage);
+      return { success: false };
+    }
+  };
+
+  // function to delete account
+  const handleDeleteAccount = async (accountId) => {
+    try {
+      const { data } = await axios.delete(
+        `${backendUrl}/account/delete/${accountId}`,
+        { withCredentials: true }
+      );
+      
+      if (data.success) {
+        toast.success(data?.message || "Your account has been deleted successfully!");
+        fetchAccountDetails()
+      } else {
+        toast.error(data?.message || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      console.log(err);
+      const serverMessage = err?.response?.data?.message;
+      const finalMessage =
+        serverMessage || err?.message || "An unexpected error occurred. Please try again later.";
+      
+      toast.error(finalMessage);
+    }
+  };
+  
+
+  // function to scan receipt
+  const scanReceipt = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const { data } = await axios.post(
+        `${backendUrl}/transaction/scan`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (data?.success) {
+        toast.success(data?.message || "Receipt scanned successfully!");
+        return { success: true, data: data.data };
+      } else {
+        toast.error(
+          data?.message ||
+            "Couldn't extract details from the receipt. Please try another image."
+        );
         return { success: false };
       }
     } catch (err) {
@@ -323,16 +546,6 @@ const AppContextProvider = ({ children }) => {
     }
   };
 
-  // useEffect(() => {
-  // fetchTransactions();
-  // fetchBudget();
-  // fetchAccountDetails();
-  // }, []);
-
-  useEffect(() => {
-    fetchBudget();
-  }, []);
-
   const value = {
     backendUrl,
     currency,
@@ -347,17 +560,25 @@ const AppContextProvider = ({ children }) => {
 
     createAccount,
     fetchAccountDetails,
+    fetchAccountDataUsingId,
     accountData,
+    handleDeleteAccount,
 
     changeDefaultAccount,
 
     transactions,
     fetchTransactions,
     deleteTransaction,
+    fetchTransactionDataUsingId,
+    fetchDashboardTransactionsUsingAccountId,
+
+    scanReceipt,
 
     createTransaction,
+    updateTransaction,
 
     fetchBudget,
+    handleUpdateBudget,
     budget,
     expenses,
   };

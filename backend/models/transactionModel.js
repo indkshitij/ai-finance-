@@ -3,8 +3,13 @@ import mongoose from "mongoose";
 const transcationSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-    transactionType: { type: String, enum: ["INCOME", "EXPENSE"] },
-    amount: { type: Number },
+    transactionType: {
+      type: String,
+      enum: ["INCOME", "EXPENSE"],
+      required: true,
+    },
+    
+    amount: { type: Number, required: true },
     description: { type: String },
     date: { type: Date },
     accountId: { type: mongoose.Schema.Types.ObjectId, ref: "account" },
@@ -16,7 +21,7 @@ const transcationSchema = new mongoose.Schema(
       enum: ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"],
     },
     nextRecurringDate: { type: Date },
-    lastProcessed: { type: Date },
+    lastProcessed: { type: Date, default: null },
     status: {
       type: String,
       default: "COMPLETED",

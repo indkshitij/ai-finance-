@@ -7,18 +7,20 @@ import {
 } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { Toaster } from "sonner";
-import { useEffect, useContext } from "react";
+import { lazy, Suspense, useEffect, useContext } from "react";
+
 import { AppContext } from "./context/AppContext";
 
 // Pages
-import Home from "./pages/Home";
-import Transaction from "./pages/Transaction";
-import Account from "./pages/Account";
-import Dashboard from "./pages/Dashboard";
-import SignInPage from "./pages/SignInPage";
-import SignUpPage from "./pages/SignUpPage";
-import PageNotFound from "./pages/PageNotFound";
-import CreateTransaction from "./pages/CreateTransaction";
+const Home = lazy(() => import("./pages/Home"));
+const Transaction = lazy(() => import("./pages/Transaction"));
+const Account = lazy(() => import("./pages/Account"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const SignInPage = lazy(() => import("./pages/SignInPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
+const CreateTransaction = lazy(() => import("./pages/CreateTransaction"));
+const UpdateTransaction = lazy(() => import("./pages/UpdateTransaction"));
 
 function App() {
   const { syncUser, logout } = useContext(AppContext);
@@ -45,30 +47,44 @@ function App() {
       <div className="">
         <Router>
           <Toaster richColors />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/sign-in/*" element={<SignInPage />} />
-            <Route path="/sign-up/*" element={<SignUpPage />} />
-            <Route
-              path="/account/:accountId"
-              element={!isSignedIn ? <Navigate to="/" /> : <Account />}
-            />
-            <Route
-              path="/transaction"
-              element={!isSignedIn ? <Navigate to="/" /> : <Transaction />}
-            />
-            <Route
-              path="/transaction/create"
-              element={
-                !isSignedIn ? <Navigate to="/" /> : <CreateTransaction />
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={!isSignedIn ? <Navigate to="/" /> : <Dashboard />}
-            />
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
+          <Suspense
+            fallback={
+              <div className="text-center h-screen flex justify-center items-center text-4xl font-semibold gradient-title ">
+                Loading...
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/sign-in/*" element={<SignInPage />} />
+              <Route path="/sign-up/*" element={<SignUpPage />} />
+              <Route
+                path="/account/:accountId"
+                element={!isSignedIn ? <Navigate to="/" /> : <Account />}
+              />
+              <Route
+                path="/transaction"
+                element={!isSignedIn ? <Navigate to="/" /> : <Transaction />}
+              />
+              <Route
+                path="/transaction/create"
+                element={
+                  !isSignedIn ? <Navigate to="/" /> : <CreateTransaction />
+                }
+              />
+              <Route
+                path="/transaction/update/:transactionId"
+                element={
+                  !isSignedIn ? <Navigate to="/" /> : <UpdateTransaction />
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={!isSignedIn ? <Navigate to="/" /> : <Dashboard />}
+              />
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </Suspense>
         </Router>
       </div>
     </>

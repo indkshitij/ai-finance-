@@ -18,74 +18,69 @@ import { Button } from "./ui/button";
 import { Check, Pencil, X } from "lucide-react";
 import { AppContext } from "@/context/AppContext";
 import { Progress } from "./ui/progress";
-import { toast } from "sonner";
+import { Switch } from "./ui/switch";
 
 const BudgetProgress = () => {
-  const { backendUrl, currency, fetchBudget, budget, expenses } =
-    useContext(AppContext);
+  const {
+    currency,
+    fetchBudget,
+    budget,
+    expenses,
+    accountData,
+    handleUpdateBudget,
+  } = useContext(AppContext);
 
+  let prevBudget = parseFloat(budget);
   const [isEditing, setIsEditing] = useState(false);
-  const [newBudget, setNewBudget] = useState("");
-  const [recurrence, setRecurrence] = useState(budget?.recurrence || "MONTHLY");
+  const [newBudget, setNewBudget] = useState(prevBudget || 0);
   const [loading, setLoading] = useState(false);
 
-  // Function to update budget
-  const handleUpdateBudget = async (budget, newBudget, recurrence) => {
-    const updatedBudget = {
-      ...budget,
-      amount: parseFloat(newBudget),
-      recurrence,
-    };
-    setLoading(true);
-    try {
-      const { data } = await axios.post(
-        `${backendUrl}/budget/setup`,
-        updatedBudget,
-        { withCredentials: true }
-      );
-
-      if (data.success) {
-        toast.success(data.message || "Budget updated successfully!");
-        return { success: true };
-      } else {
-        toast.error(data.message || "Failed to update budget.");
-        return { success: false };
-      }
-    } catch (error) {
-      console.error("Error updating budget:", error);
-      const serverMessage = error?.response?.data?.message;
-      const finalMessage =
-        serverMessage || error?.message || "An unexpected error occurred.";
-      toast.error(finalMessage);
-      return { success: false };
-    } finally {
-      setLoading(false);
-    }
-  };
+  let defaultAcc;
+  if (accountData) {
+    defaultAcc = accountData.find((acc) => acc.isDefault === true);
+  }
 
   const handleCancel = () => {
-    setNewBudget(budget?.toString() || "");
+    setNewBudget(budget?.amount?.toString() || "");
     setIsEditing(false);
   };
 
-  const percentageUsed = budget && budget > 0 ? (expenses / budget) * 100 : 0;
+  const handleSave = async () => {
+    if (!newBudget || isNaN(newBudget) || parseFloat(newBudget) <= 0) {
+      toast.error("Please enter a valid budget amount.");
+      return;
+    }
 
-  // useEffect(() => {
-  //   setNewBudget(budget?.toString() || "");
-  // }, [budget]);
+    const updatedBudget = {
+      accountId: defaultAcc._id,
+      amount: parseFloat(newBudget),
+      recurrence,
+    };
+    const updateResult = await handleUpdateBudget(updatedBudget);
+    if (updateResult?.success) {
+      setIsEditing(false);
+    }
+  };
+
+  let percentageUsed =
+    budget && expenses != null ? (expenses / budget) * 100 : 0;
+  if (percentageUsed > 100) {
+    percentageUsed = 100;
+  }
 
   useEffect(() => {
     fetchBudget();
-  }, [handleUpdateBudget]);
+  }, []);
+
   return (
     <section className="">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div className="flex-1">
-            <CardTitle>Monthly Budget (Default Account)</CardTitle>
+            <CardTitle className="text-gray-800">Monthly Budget (Default Account)</CardTitle>
             <div className="flex items-center gap-2 mt-3">
               {isEditing ? (
-                <div className="flex items-center gap-2 ">
+                <div className="flex items-center gap-2">
                   <Input
                     type="number"
                     value={newBudget}
@@ -95,23 +90,11 @@ const BudgetProgress = () => {
                     autoFocus
                     disabled={loading}
                   />
-                  <Select
-                    value={recurrence}
-                    onChange={(e) => setRecurrence(e.target.value)}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Theme" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="MONTHLY">Monthly</SelectItem>
-                      <SelectItem value="YEARLY">Yearly</SelectItem>
-                      <SelectItem value="NONE">None</SelectItem>
-                    </SelectContent>
-                  </Select>
+
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => handleUpdateBudget()}
+                    onClick={handleSave}
                     className="cursor-pointer"
                     disabled={loading}
                   >
@@ -159,7 +142,7 @@ const BudgetProgress = () => {
                     ? "bg-red-500"
                     : percentageUsed >= 75
                     ? "bg-yellow-500"
-                    : "bg-green-500"
+                    : "bg-blue-500"
                 }`}
               />
               <p className="text-muted-foreground text-right text-xs">

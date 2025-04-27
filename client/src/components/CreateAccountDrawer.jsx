@@ -21,13 +21,11 @@ import { Button } from "./ui/button.jsx";
 import { accountSchema } from "../lib/formSchema.js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import useFetch from "@/hooks/useFetch";
 import { AppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 
 const CreateAccountDrawer = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const { loading, apiCall, error, data } = useFetch();
   const { fetchAccountDetails, createAccount } = useContext(AppContext);
   const [createAccountLoading, setCreateAccountLoading] = useState(false);
   const {
@@ -79,7 +77,7 @@ const CreateAccountDrawer = ({ children }) => {
                 </label>
                 <Input
                   id="name"
-                  disabled={loading}
+                  disabled={createAccountLoading}
                   placeholder="e.g., Main Checking"
                   {...register("name")}
                 />
@@ -98,7 +96,7 @@ const CreateAccountDrawer = ({ children }) => {
                 <Select
                   onValueChange={(value) => setValue("type", value)}
                   defaultValue={watch("type")}
-                  disabled={loading}
+                  disabled={createAccountLoading}
                 >
                   <SelectTrigger id="type">
                     <SelectValue placeholder="Select type" />
@@ -125,7 +123,7 @@ const CreateAccountDrawer = ({ children }) => {
                   type="number"
                   step="1"
                   placeholder="0.00"
-                  disabled={loading}
+                  disabled={createAccountLoading}
                   {...register("balance")}
                 />
                 {errors.balance && (
@@ -151,7 +149,7 @@ const CreateAccountDrawer = ({ children }) => {
                   id="isDefault"
                   checked={watch("isDefault")}
                   onCheckedChange={(checked) => setValue("isDefault", checked)}
-                  disabled={loading}
+                  disabled={createAccountLoading}
                 />
               </div>
 
@@ -167,10 +165,10 @@ const CreateAccountDrawer = ({ children }) => {
                 </DrawerClose>
                 <Button
                   type="submit"
-                  className="flex-1 font-normal cursor-pointer duration-300 ease-in-out"
-                  disabled={loading}
+                  className="flex-1 font-normal cursor-pointer bg-blue-500 hover:bg-blue-600 duration-300 ease-in-out"
+                  disabled={createAccountLoading}
                 >
-                  {loading ? (
+                  {createAccountLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Creating...

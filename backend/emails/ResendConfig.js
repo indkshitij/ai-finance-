@@ -1,10 +1,12 @@
 import { Resend } from "resend";
 import Email from "./Email.js";
 import ReactDOMServer from "react-dom/server";
+import dotenv from "dotenv";
+dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY || " ");
 
-async function sendCustomEmail({ to, subject, userName, type, data }) {
+async function SendEmail({ to, subject, userName, type, data }) {
   try {
     const { data: result, error } = await resend.emails.send({
       from: "NeoFinance <onboarding@resend.dev>",
@@ -26,4 +28,4 @@ async function sendCustomEmail({ to, subject, userName, type, data }) {
   }
 }
 
-export default sendCustomEmail;
+export default SendEmail;

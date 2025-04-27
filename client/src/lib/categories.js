@@ -758,3 +758,4 @@ export const categoryColors = defaultCategories.reduce((acc, category) => {
 
   return acc;
 }, {});
+

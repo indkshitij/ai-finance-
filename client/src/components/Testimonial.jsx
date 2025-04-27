@@ -32,11 +32,11 @@ const Testimonial = () => {
         <h2 className="text-3xl sm:text-4xl font-semibold text-center text-zinc-800 mb-8">
           What Our Users Say
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
           {testimonialsData.map((testimonial, index) => (
             <Card
               key={index}
-              className="p-6 hover:shadow-xl transition-shadow duration-300 bg-white rounded-xl"
+              className=" lg:p-6 hover:shadow-xl transition-shadow duration-300 bg-white rounded-xl"
             >
               <CardContent className="pt-4">
                 <div className="flex items-center mb-4">
@@ -54,7 +54,7 @@ const Testimonial = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
                   “{testimonial.quote}”
                 </p>
               </CardContent>

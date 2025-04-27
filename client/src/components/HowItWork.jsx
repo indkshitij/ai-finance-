@@ -29,7 +29,7 @@ const HowItWork = () => {
         <h2 className="text-3xl sm:text-4xl font-semibold text-center text-zinc-800 mb-8">
           How It Works
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-12">
           {howItWorksData.map((step, index) => (
             <div
               key={index}
@@ -41,7 +41,7 @@ const HowItWork = () => {
               <h3 className="text-lg font-semibold text-zinc-800 mb-2">
                 {step.title}
               </h3>
-              <p className="text-gray-600 text-sm">{step.description}</p>
+              <p className="text-gray-600 text-xs lg:text-sm">{step.description}</p>
             </div>
           ))}
         </div>

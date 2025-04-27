@@ -12,7 +12,7 @@ const budgetSchema = new mongoose.Schema(
     monthName: { type: String },
     year: { type: Number },
     amount: { type: Number, required: true },
-    lastAlertSent: { type: Date },
+    lastAlertSent: { type: Date, default: null },
     alertThreshold: { type: Number, default: 80 },
     isRecurring: { type: Boolean, default: false },
     recurrence: {

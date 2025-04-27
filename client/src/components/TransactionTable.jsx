@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -22,12 +22,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -46,14 +61,12 @@ import { AppContext } from "@/context/AppContext";
 import { categoryColors } from "@/lib/categories.js";
 import { Input } from "./ui/input";
 import ConfirmDelete from "@/modals/ConfirmDelete";
+import { useNavigate } from "react-router-dom";
 
 const TransactionTable = ({ transactions }) => {
-  const {
-    formatDate,
-    formatTime,
-    currency,
-    deleteTransaction,
-  } = useContext(AppContext);
+  const navigate = useNavigate();
+  const { formatDate, formatTime, currency, deleteTransaction } =
+    useContext(AppContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -74,19 +87,19 @@ const TransactionTable = ({ transactions }) => {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === transactions.length) {
+    if (selectedIds.length === transactionInThatPage.length) {
       setSelectedIds([]);
     } else {
-      const allIds = transactions.map((t) => t._id);
+      const allIds = transactionInThatPage.map((t) => t._id);
       setSelectedIds(allIds);
     }
   };
+
   // Delete Transaction
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleDelete = (transactionId) => {
-    setSelectedIds(transactionId);
+  const handleDelete = () => {
     setIsModalOpen(true);
   };
   const handleConfirmDelete = async () => {
@@ -125,7 +138,7 @@ const TransactionTable = ({ transactions }) => {
       let comparison = 0;
       switch (sortConfig.field) {
         case "date":
-          comparison = new Date(a.createdAt) - new Date(b.createdAt);
+          comparison = new Date(a.date) - new Date(b.date);
           break;
         case "amount":
           comparison = a.amount - b.amount;
@@ -150,6 +163,31 @@ const TransactionTable = ({ transactions }) => {
     setTypeFilter("");
     setSelectedIds([]);
   };
+
+  // pagination function
+  const [transactionPerPage, setTransactionPerPage] = useState(50);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const lastIndexItem = transactionPerPage * currentPage;
+  const firstIndexItem = lastIndexItem - transactionPerPage;
+  const transactionInThatPage = filterAndSortTransactions.slice(
+    firstIndexItem,
+    lastIndexItem
+  );
+  const totalPages = Math.ceil(
+    filterAndSortTransactions.length / transactionPerPage
+  );
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter, reccuringFilter]);
 
   return (
     <>
@@ -227,12 +265,12 @@ const TransactionTable = ({ transactions }) => {
         </div>
       </div>
 
-      <section className="w-full h-full border border-gray-200 bg-gray-100/50 rounded-xl overflow-x-auto">
+      <section className="w-full h-full border border-gray-200 bg-gray-100/50 rounded-md  overflow-x-auto">
         {/* transaction table */}
         <Table className="min-w-[768px] w-full text-sm">
-          <TableHeader className="bg-gray-200">
+          <TableHeader className="bg-gray-200 ">
             <TableRow>
-              <TableHead className="w-[3%]">
+              <TableHead className="w-[4%] py-3.5">
                 <Checkbox
                   className="border border-gray-400 cursor-pointer"
                   checked={
@@ -243,7 +281,7 @@ const TransactionTable = ({ transactions }) => {
                 />
               </TableHead>
               <TableHead
-                className="w-[18%] text-gray-500 font-normal"
+                className="w-[16%] text-gray-500 font-normal"
                 onClick={() => {
                   setSortConfig((prevConfig) => {
                     const newDirection =
@@ -265,11 +303,11 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead className="w-[40%] text-gray-500 font-normal">
+              <TableHead className="w-[54%] text-gray-500 font-normal">
                 Description
               </TableHead>
               <TableHead
-                className="w-[12%] text-gray-500 font-normal cursor-pointer"
+                className="w-[7%] text-gray-500 font-normal cursor-pointer"
                 onClick={() => {
                   setSortConfig((prevConfig) => {
                     const newDirection =
@@ -314,15 +352,16 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead className="w-[10%] text-gray-500 font-normal">
+
+              <TableHead className="w-[12%] text-gray-500 font-normal">
                 Recurring
               </TableHead>
-              <TableHead className="w-[5%]" />
+              <TableHead className="w-[6%]" />
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {transactions.length === 0 ? (
+            {transactionInThatPage.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
@@ -334,9 +373,9 @@ const TransactionTable = ({ transactions }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              filterAndSortTransactions.map((transaction, index) => (
-                <TableRow key={index} className=" hover:bg-gray-200">
-                  <TableCell>
+              transactionInThatPage.map((transaction) => (
+                <TableRow key={transaction._id} className=" hover:bg-gray-200">
+                  <TableCell className="py-3.5">
                     <Checkbox
                       className="border border-gray-400  cursor-pointer"
                       checked={selectedIds.includes(transaction._id)}
@@ -344,12 +383,27 @@ const TransactionTable = ({ transactions }) => {
                     />
                   </TableCell>
 
-                  <TableCell>
-                    {formatDate(transaction?.createdAt)},{" "}
-                    {formatTime(transaction?.createdAt)}
+                  <TableCell className="text-sm">
+                    {formatDate(transaction?.date)},{" "}
+                    {formatTime(transaction?.date)}
                   </TableCell>
 
-                  <TableCell>{transaction?.description}</TableCell>
+                  <TableCell className="truncate">
+                    {transaction?.description.length < 100 ? (
+                      <span className="">{transaction?.description}</span>
+                    ) : (
+                      <HoverCard>
+                        <HoverCardTrigger className="cursor-pointer ">
+                          {`${transaction?.description.substring(0, 90)}...`}
+                        </HoverCardTrigger>
+                        <HoverCardContent className="cursor-pointer w-[500px] text-base shadow-md border border-gray-300">
+                          <span className=" leading-relaxed text-justify text-sm">
+                            {transaction?.description}
+                          </span>
+                        </HoverCardContent>
+                      </HoverCard>
+                    )}
+                  </TableCell>
 
                   <TableCell className="capitalize">
                     <span
@@ -411,7 +465,7 @@ const TransactionTable = ({ transactions }) => {
                     )}
                   </TableCell>
 
-                  <TableCell className="text-right ">
+                  <TableCell className=" text-right ">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -422,13 +476,18 @@ const TransactionTable = ({ transactions }) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() =>
+                            navigate(`/transaction/update/${transaction._id}`)
+                          }
+                          className="cursor-pointer"
+                        >
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuSeparator /> 
                         <DropdownMenuItem className="text-destructive cursor-pointer">
                           Delete
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -438,11 +497,80 @@ const TransactionTable = ({ transactions }) => {
           </TableBody>
         </Table>
       </section>
-      <ConfirmDelete
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-      />
+      {/* Pagination Code */}
+      {totalPages > 1 && (
+        <Pagination className="mt-8">
+          <PaginationContent className="flex items-center gap-2">
+            {/* Previous Button */}
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={handlePrevious}
+                className="text-gray-700  cursor-pointer"
+              />
+            </PaginationItem>
+
+            {/* First page if needed */}
+            {currentPage > 2 && (
+              <>
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(1)}
+                    className="cursor-pointer"
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+                {currentPage > 3 && <PaginationEllipsis />}
+              </>
+            )}
+
+            {/* Dynamic pages: show 3 pages around current */}
+            {Array.from({ length: totalPages }, (_, index) => index + 1)
+              .filter(
+                (page) =>
+                  page === currentPage ||
+                  page === currentPage - 1 ||
+                  page === currentPage + 1
+              )
+              .map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(page)}
+                    isActive={currentPage === page}
+                    className={`cursor-pointer ${
+                      currentPage === page ? "font-bold" : ""
+                    }`}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+            {/* Last page */}
+            {currentPage < totalPages - 1 && (
+              <>
+                {currentPage < totalPages - 2 && <PaginationEllipsis />}
+                <PaginationItem>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(totalPages)}
+                    className="cursor-pointer"
+                  >
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )}
+
+            {/* Next  */}
+            <PaginationItem>
+              <PaginationNext
+                onClick={handleNext}
+                className="text-gray-700  cursor-pointer"
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </>
   );
 };

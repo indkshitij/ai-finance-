@@ -2,12 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap");
 @import "tailwindcss";
 
-* {
-  /* font-family: "Poppins", sans-serif; */
-  /* font-family: "Inter", sans-serif; */
-  /* font-family: Arial, Helvetica, sans-serif; */
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -47,7 +41,14 @@ body {
   transform: rotateX(0deg) scale(1) translateY(40px);
 }
 
-@keyframes gradientMove {
+/* clerk side user btn */
+.cl-avatarBox {
+  width: 2.3rem;
+  height: 2.3rem;
+}
+
+/* receiptScan */
+@keyframes softSlide {
   0% {
     background-position: 0% 50%;
   }
@@ -59,15 +60,19 @@ body {
   }
 }
 
-/* Add this class */
-.animate-gradient {
+.ai-gradient {
+  background-image: linear-gradient(120deg, #8b5cf6, #14b8a6, #0ea5e9, #a855f7);
   background-size: 200% 200%;
-  animation: gradientMove 3s ease infinite;
+  animation: softSlide 5s ease-in-out infinite;
+  transition: all 0.3s ease-in-out;
+  border: none;
 }
 
-.cl-avatarBox {
-  width: 2.3rem;
-  height: 2.3rem;
+.ai-gradient:hover {
+  filter: brightness(1.25);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 @theme inline {
@@ -188,7 +193,9 @@ body {
 
 @layer utilities {
   .gradient-title {
-    @apply bg-gradient-to-br from-blue-600 to-purple-600 text-transparent bg-clip-text;
+    @apply bg-gradient-to-r from-blue-500 via-sky-400 to-blue-800 text-transparent bg-clip-text;
+    background-size: 200% 200%;
+    animation: gradientMove 3s ease infinite;
   }
 }
 
@@ -203,6 +210,8 @@ body {
     background-position: 0% 50%;
   }
 }
+
+
 
 ::-webkit-scrollbar {
   width: 7px;

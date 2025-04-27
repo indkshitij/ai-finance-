@@ -7,7 +7,7 @@ import userRouter from "./routes/userRoutes.js";
 import accountRouter from "./routes/accountRoutes.js";
 import transactionRouter from "./routes/transactionRoutes.js";
 import budgetRouter from "./routes/budgetRoutes.js";
-import { inngest,functions } from "./config/inngest.js";
+import { inngest, functions } from "./config/inngest.js";
 import { serve } from "inngest/express";
 
 const app = express();
